@@ -233,11 +233,7 @@ exports.scores = async (req, res, next) => {
         //     //gScore = req.session.groupPlay [g.id].resolved.length;
         //     //scores.push(gScore);
         // });
-
-        // console.log (groups);
-        // console.log (scores);
-
-        
+      
         const scores = [];
         groups.forEach(g => {
             temp =[];
@@ -249,15 +245,29 @@ exports.scores = async (req, res, next) => {
             // scores.push({name: g.name, score: req.session.groupPlay [g.id].resolved.length});
         });
 
-        console.log (groups);
-        console.log (scores);
-        console.log (scores[0].name);
-        console.log (scores[0].score);
+        // console.log (groups);
+        // console.log (scores);
+        // console.log (scores[0].name);
+        // console.log (scores[0].score);
 
         res.render('groups/scores.ejs', {scores});
 
     } catch (error) {
         next(error);
     }
-    
+};
+
+// GET /groups/:groupId/groupScore
+exports.groupScore = (req, res, next) => {
+
+    // Recuperar grupo
+    const group = req.load.group;
+
+    //Recuperar la sesión para un grupo determinado
+    req.session.groupPlay = req.session.groupPlay || {};
+    req.session.groupPlay[group.id] = req.session.groupPlay[group.id] || { lastQuizId: 0, resolved: [] };
+
+    const groupScore = req.session.groupPlay [group.id].resolved.length;
+
+    res.render('groups/groupScore.ejs', {group, groupScore});
 };

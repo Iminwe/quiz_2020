@@ -7,6 +7,9 @@
             <td>
                 <a href="/groups/<%= group.id %>/randomplay"><%= group.name %></a>
             </td>
+            <td>
+                <a href="/groups/<%= group.id %>/groupScore" class="button">Score</a>
+            </td>
             <% if (locals.loginUser && locals.loginUser.isAdmin) { %>
                 <td>
                     <a href="/groups/<%= group.id %>/edit" class="button">Edit</a>

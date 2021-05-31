@@ -208,5 +208,7 @@ router.get('/groups/:groupId(\\d+)/randomplay',                 groupController.
 router.get('/groups/:groupId(\\d+)/randomcheck/:quizId(\\d+)',  groupController.randomCheck);
 
 router.get ('/groups/scores', groupController.scores);
+router.get('/groups/:groupId(\\d+)/groupScore',
+    groupController.groupScore);
 
 module.exports = router;
