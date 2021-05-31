@@ -193,7 +193,6 @@ exports.destroy = async (req, res, next) => {
     };
 
 
-
 // GET /quizzes/randomCheck/:quizId?answer=<respuesta>
     exports.randomCheck = (req, res, next) => {
 
@@ -227,40 +226,43 @@ exports.destroy = async (req, res, next) => {
             score: score,
             result,
         });
-
-        // if(!result){
-        //     req.session.randomPlayResolved = [];
-        // }
     };
 
-// GET /quizzes/randomPlay 
+
+// GET /quizzes/randomplay 
     exports.randomPlay = async (req, res, next) => {
-        if (!req.session.randomPlayResolved){
+        if (!req.session.randomPlayResolved) {
             req.session.randomPlayResolved = [];
         }
 
         req.session.randomPlayLastQuizId = req.session.randomPlayLastQuizId || "";
 
-        let quiz;
+        try {
+            let quiz = 0;
 
-        if (req.session.randomPlayLastQuizId) {
-            quiz = await models.Quiz.findByPk (req.session.randomPlayLastQuizId);
+            if (req.session.randomPlayLastQuizId) {
+                quiz = await models.Quiz.findByPk(req.session.randomPlayLastQuizId);
 
-        } else {
-            const total = await models.Quiz.count();
-            const quedan = total - req.session.randomPlayResolved.length;
+            } else {
+                const total = await models.Quiz.count();
+                const quedan = total - req.session.randomPlayResolved.length;
 
-            quiz = await models.Quiz.findOne({
-                where: { 'id': { [Sequelize.Op.notIn]: req.session.randomPlayResolved } },
-                offset: Math.floor(Math.random() * quedan)
-            });
-            req.session.randomPlayLastQuizId = quiz.id;
+                quiz = await models.Quiz.findOne({
+                    where: { 'id': { [Sequelize.Op.notIn]: req.session.randomPlayResolved } },
+                    offset: Math.floor(Math.random() * quedan)
+                });
+                // si lo pongo aquí no funciona
+                // req.session.randomPlayLastQuizId = quiz.id;
+            }
+
+            if (quiz) {
+                req.session.randomPlayLastQuizId = quiz.id;
+                res.render('quizzes/random_play', { quiz, score: req.session.randomPlayResolved.length });
+            } else {
+                res.render('quizzes/random_nomore', { score: req.session.randomPlayResolved.length });
+            }
         }
-
-        if(quiz){
-            //req.session.randomPlayResolved.push(quiz.id)
-            res.render('quizzes/random_play', {quiz, score: req.session.randomPlayResolved.length});
-        } else {
-            res.render('quizzes/random_nomore', {score: req.session.randomPlayResolved.length});
+        catch (error) {
+            next(error);
         }
     };
