@@ -251,15 +251,14 @@ exports.destroy = async (req, res, next) => {
                     where: { 'id': { [Sequelize.Op.notIn]: req.session.randomPlayResolved } },
                     offset: Math.floor(Math.random() * quedan)
                 });
-                // si lo pongo aquí no funciona
-                // req.session.randomPlayLastQuizId = quiz.id;
-            }
 
-            if (quiz) {
-                req.session.randomPlayLastQuizId = quiz.id;
-                res.render('quizzes/random_play', { quiz, score: req.session.randomPlayResolved.length });
-            } else {
-                res.render('quizzes/random_nomore', { score: req.session.randomPlayResolved.length });
+                if (quiz) {
+                    // Esto lo asignamos aquí porque comprobamos que quiz no es NULL
+                    req.session.randomPlayLastQuizId = quiz.id;
+                    res.render('quizzes/random_play', { quiz, score: req.session.randomPlayResolved.length });
+                } else {
+                    res.render('quizzes/random_nomore', { score: req.session.randomPlayResolved.length });
+                }
             }
         }
         catch (error) {
