@@ -241,9 +241,6 @@ exports.destroy = async (req, res, next) => {
 
         req.session.randomPlayLastQuizId = req.session.randomPlayLastQuizId || "";
 
-        // const quiz = await models.Quiz.findOne({
-        //     where: {'id': {[Sequelize.Op.notIn]: req.session.randomPlayResolved}}
-        // });
         let quiz;
 
         if (req.session.randomPlayLastQuizId) {
