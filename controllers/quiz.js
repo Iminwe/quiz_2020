@@ -191,3 +191,79 @@ exports.destroy = async (req, res, next) => {
             answer
         });
     };
+
+
+
+// GET /quizzes/randomCheck/:quizId?answer=<respuesta>
+    exports.randomCheck = (req, res, next) => {
+
+        // Recuperar quiz a través de la petición (URL)
+        const {quiz} = req.load;
+
+        //Recuperar answer a través de la petición (query)
+        const {query} = req;
+        const answer = query.answer || "";
+
+        // Comprobar que answer == quiz answer
+        const result = answer.toLowerCase().trim() === quiz.answer.toLowerCase().trim();
+     
+        if (result){
+            if(!req.session.randomPlayResolved.includes(quiz.id)){
+                req.session.randomPlayResolved.push(quiz.id);
+                score += 1;
+                req.session.randomPlayLastQuizId = "";
+            }        
+        }
+        
+        var score = req.session.randomPlayResolved.length;
+        
+        if (!result){
+            req.session.randomPlayResolved = [];
+        }
+
+        //Actualizar puntuación
+        res.render('quizzes/random_result', {
+            answer: answer, 
+            score: score,
+            result,
+        });
+
+        // if(!result){
+        //     req.session.randomPlayResolved = [];
+        // }
+    };
+
+// GET /quizzes/randomPlay 
+    exports.randomPlay = async (req, res, next) => {
+        if (!req.session.randomPlayResolved){
+            req.session.randomPlayResolved = [];
+        }
+
+        req.session.randomPlayLastQuizId = req.session.randomPlayLastQuizId || "";
+
+        // const quiz = await models.Quiz.findOne({
+        //     where: {'id': {[Sequelize.Op.notIn]: req.session.randomPlayResolved}}
+        // });
+        let quiz;
+
+        if (req.session.randomPlayLastQuizId) {
+            quiz = await models.Quiz.findByPk (req.session.randomPlayLastQuizId);
+
+        } else {
+            const total = await models.Quiz.count();
+            const quedan = total - req.session.randomPlayResolved.length;
+
+            quiz = await models.Quiz.findOne({
+                where: { 'id': { [Sequelize.Op.notIn]: req.session.randomPlayResolved } },
+                offset: Math.floor(Math.random() * quedan)
+            });
+            req.session.randomPlayLastQuizId = quiz.id;
+        }
+
+        if(quiz){
+            //req.session.randomPlayResolved.push(quiz.id)
+            res.render('quizzes/random_play', {quiz, score: req.session.randomPlayResolved.length});
+        } else {
+            res.render('quizzes/random_nomore', {score: req.session.randomPlayResolved.length});
+        }
+    };
