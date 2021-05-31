@@ -220,3 +220,44 @@ exports.randomCheck = (req, res, next) => {
     res.render('groups/random_result', {group, result, answer, score});
 };
 
+// GET /groups/scores
+exports.scores = async (req, res, next) => {
+
+    try {
+        const groups = await models.Group.findAll();
+
+        // // const score = req.session.groupPlay [group.id].resolved.length;
+        // const scores = [];
+        // groups.forEach(g => {
+        //     scores[g.name]=req.session.groupPlay [g.id].resolved.length;
+        //     //gScore = req.session.groupPlay [g.id].resolved.length;
+        //     //scores.push(gScore);
+        // });
+
+        // console.log (groups);
+        // console.log (scores);
+
+        
+        const scores = [];
+        groups.forEach(g => {
+            temp =[];
+            console.log(g.name)
+            temp.name = g.name;
+            temp.score = req.session.groupPlay [g.id].resolved.length;
+            scores.push(temp);
+
+            // scores.push({name: g.name, score: req.session.groupPlay [g.id].resolved.length});
+        });
+
+        console.log (groups);
+        console.log (scores);
+        console.log (scores[0].name);
+        console.log (scores[0].score);
+
+        res.render('groups/scores.ejs', {scores});
+
+    } catch (error) {
+        next(error);
+    }
+    
+};

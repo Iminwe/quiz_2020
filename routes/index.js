@@ -204,7 +204,9 @@ router.delete('/groups/:groupId(\\d+)',
     sessionController.adminRequired,
     groupController.destroy);
 
-router.get('/groups/:groupId(\\d+)/randomplay',  groupController.randomPlay);
-router.get('/groups/:groupId(\\d+)/randomcheck/:quizId(\\d+)', groupController.randomCheck);
+router.get('/groups/:groupId(\\d+)/randomplay',                 groupController.randomPlay);
+router.get('/groups/:groupId(\\d+)/randomcheck/:quizId(\\d+)',  groupController.randomCheck);
+
+router.get ('/groups/scores', groupController.scores);
 
 module.exports = router;

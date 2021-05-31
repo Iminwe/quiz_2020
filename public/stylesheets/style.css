@@ -2,6 +2,7 @@
 body {
   font: 16px "Lucida Grande", Helvetica, Arial, sans-serif;
   margin: 0;
+  color:#733ec9;
 }
 
 #page {
@@ -25,6 +26,10 @@ body {
 
 #mainHeader h1 {
   margin: 8px;
+}
+
+#mainHeaderImage {
+  float: left;
 }
 
 #mainNav a {
